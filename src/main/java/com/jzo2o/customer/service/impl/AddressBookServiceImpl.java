@@ -114,4 +114,61 @@ public class AddressBookServiceImpl extends ServiceImpl<AddressBookMapper, Addre
         return PageUtils.toPage(bookPage,AddressBook.class);
     }
 
+    /**
+     * 修改地址
+     *
+     * @param id
+     * @param addressBookUpsertReqDTO
+     */
+    @Override
+    @Transactional
+    public AddressBook updateAddress(Long id, AddressBookUpsertReqDTO addressBookUpsertReqDTO) {
+        LocationResDTO locationByAddress = mapApi.getLocationByAddress(addressBookUpsertReqDTO.getAddress());
+        String location = locationByAddress.getLocation();
+        Double lon = Double.valueOf(location.split(",")[0]);
+        Double lat = Double.valueOf(location.split(",")[1]);
+        AddressBook addressBook = BeanUtil.toBean(addressBookUpsertReqDTO, AddressBook.class);
+        addressBook.setLon(lon);
+        addressBook.setLat(lat);
+        if(addressBook.getIsDefault().equals(1)) {
+            AddressBook defaultAddress = lambdaQuery()
+                    .eq(AddressBook::getUserId, UserContext.currentUserId())
+                    .eq(AddressBook::getIsDefault, "1")
+                    .ne(AddressBook::getId,id)
+                    .one();
+            if (defaultAddress != null) {
+                defaultAddress.setIsDefault(0);
+                updateById(defaultAddress);
+            }
+        }
+        //3.更新地址
+        addressBook.setId(id);
+        updateById(addressBook);
+        return addressBook;
+    }
+
+    /**
+     * 设置默认地址
+     *
+     * @param id
+     * @param flag
+     * @return
+     */
+    @Override
+    @Transactional
+    public AddressBook setDefault(Long id, Integer flag) {
+        AddressBook defaultAddressBook = lambdaQuery().eq(AddressBook::getUserId, UserContext.currentUserId())
+            .eq(AddressBook::getIsDefault, "1")
+            .ne(AddressBook::getId, id)
+            .one();
+        if (defaultAddressBook != null) {
+            defaultAddressBook.setIsDefault(0);
+            updateById(defaultAddressBook);
+        }
+        AddressBook addressBook = getById(id);
+        addressBook.setIsDefault(flag);
+        updateById(addressBook);
+        return addressBook;
+    }
+
 }

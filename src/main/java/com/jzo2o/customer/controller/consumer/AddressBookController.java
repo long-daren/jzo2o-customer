@@ -1,13 +1,17 @@
 package com.jzo2o.customer.controller.consumer;
 
+import java.util.List;
 import javax.annotation.Resource;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jzo2o.api.foundations.dto.response.ServeItemResDTO;
@@ -44,8 +48,27 @@ public class AddressBookController {
     }
 
     @GetMapping("/{id}")
-    @ApiOperation("地址薄修改")
-    public AddressBook update(@PathVariable("id") Long id) {
+    @ApiOperation("按id查询地址薄")
+    public AddressBook getById(@PathVariable("id") Long id) {
         return addressBookService.getById(id);
     }
+
+    @PutMapping("/{id}")
+    @ApiOperation("修改地址薄")
+    public AddressBook update(@PathVariable("id") Long id,@RequestBody AddressBookUpsertReqDTO addressBookUpsertReqDTO) {
+        return addressBookService.updateAddress(id,addressBookUpsertReqDTO);
+    }
+
+    @PutMapping("/default")
+    @ApiOperation("设置默认地址")
+    public AddressBook setDefault(@RequestParam("id") Long id, @RequestParam("flag") Integer flag){
+        return addressBookService.setDefault(id, flag);
+    }
+
+    @DeleteMapping("/batch")
+    @ApiOperation("批量删除地址薄")
+    public void deleteBatch(@RequestBody List<Long> ids) {
+        addressBookService.removeByIds(ids);
+    }
+
 }
