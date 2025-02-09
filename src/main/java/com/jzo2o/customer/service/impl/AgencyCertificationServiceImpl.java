@@ -4,11 +4,16 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jzo2o.common.expcetions.BadRequestException;
+import com.jzo2o.common.utils.BeanUtils;
 import com.jzo2o.customer.enums.CertificationStatusEnum;
 import com.jzo2o.customer.mapper.AgencyCertificationMapper;
 import com.jzo2o.customer.model.domain.AgencyCertification;
 import com.jzo2o.customer.model.dto.AgencyCertificationUpdateDTO;
+import com.jzo2o.customer.model.dto.request.AgencyCertificationAuditAddReqDTO;
 import com.jzo2o.customer.service.IAgencyCertificationService;
+import com.jzo2o.mvc.utils.UserContext;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,6 +46,20 @@ public class AgencyCertificationServiceImpl extends ServiceImpl<AgencyCertificat
                 .set(ObjectUtil.isNotEmpty(agencyCertificationUpdateDTO.getBusinessLicense()), AgencyCertification::getBusinessLicense, agencyCertificationUpdateDTO.getBusinessLicense())
                 .set(ObjectUtil.isNotEmpty(agencyCertificationUpdateDTO.getCertificationTime()), AgencyCertification::getCertificationTime, agencyCertificationUpdateDTO.getCertificationTime());
         super.update(updateWrapper);
+    }
+
+    @Override
+    public AgencyCertification submitAuth(AgencyCertificationAuditAddReqDTO agencyCertificationAuditAddReqDTO) {
+        Long agencyId = UserContext.currentUserId();
+        AgencyCertification agencyCertification = BeanUtils.toBean(agencyCertificationAuditAddReqDTO, AgencyCertification.class);
+        agencyCertification.setId(agencyId);
+        agencyCertification.setCertificationStatus(CertificationStatusEnum.PROGRESSING.getStatus());
+        saveOrUpdate(agencyCertification);
+        AgencyCertification certification = baseMapper.selectById(agencyId);
+        if (certification == null) {
+            throw new BadRequestException("提交认证失败");
+        }
+        return certification;
     }
 
 

@@ -3,6 +3,7 @@ package com.jzo2o.customer.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jzo2o.customer.model.domain.AgencyCertification;
 import com.jzo2o.customer.model.dto.AgencyCertificationUpdateDTO;
+import com.jzo2o.customer.model.dto.request.AgencyCertificationAuditAddReqDTO;
 import com.jzo2o.customer.model.dto.response.AgencyCertificationResDTO;
 
 /**
@@ -24,4 +25,11 @@ public interface IAgencyCertificationService extends IService<AgencyCertificatio
     void updateByServeProviderId(AgencyCertificationUpdateDTO agencyCertificationUpdateDTO);
 
 
+    /**
+     * 提交认证申请
+     *
+     * @param agencyCertificationAuditAddReqDTO 认证申请模型
+     * @return 机构认证信息
+     */
+    AgencyCertification submitAuth(AgencyCertificationAuditAddReqDTO agencyCertificationAuditAddReqDTO);
 }

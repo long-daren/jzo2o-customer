@@ -1,4 +1,4 @@
-package com.jzo2o.customer.controller.consumer;
+package com.jzo2o.customer.controller.worker;
 
 
 import javax.annotation.Resource;
