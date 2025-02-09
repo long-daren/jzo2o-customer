@@ -32,4 +32,18 @@ public interface ILoginService {
      * @return token
      */
     LoginResDTO loginForCommonUser(LoginForCustomerReqDTO loginForCustomerReqDTO);
+
+    /**
+     * 注册
+     * @param loginForWorkReqDTO
+     * @return
+     */
+    void registry(LoginForWorkReqDTO loginForWorkReqDTO);
+
+
+    /**
+     * 重置密码
+     * @param loginForWorkReqDTO
+     */
+    void resetPassword(LoginForWorkReqDTO loginForWorkReqDTO);
 }

@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
+
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.jzo2o.api.publics.SmsCodeApi;
 import com.jzo2o.api.publics.WechatApi;
 import com.jzo2o.api.publics.dto.response.OpenIdResDTO;
@@ -129,5 +131,66 @@ public class ILoginServiceImpl implements ILoginService {
         //构建token
         String token = jwtTool.createToken(commonUser.getId(), commonUser.getNickname(), commonUser.getAvatar(), UserType.C_USER);
         return new LoginResDTO(token);
+    }
+
+    /**
+     * 注册
+     *
+     * @param loginForWorkReqDTO
+     * @return
+     */
+    @Override
+    public void registry(LoginForWorkReqDTO loginForWorkReqDTO) {
+
+        // 数据校验
+        if(StringUtils.isEmpty(loginForWorkReqDTO.getVeriryCode())){
+            throw new BadRequestException("验证码错误，请重新获取");
+        }
+        //远程调用publics服务校验验证码是否正确
+        boolean verifyResult = smsCodeApi.verify(loginForWorkReqDTO.getPhone(), SmsBussinessTypeEnum.INSTITION_REGISTER, loginForWorkReqDTO.getVeriryCode()).getIsSuccess();
+        if(!verifyResult) {
+            throw new BadRequestException("验证码错误，请重新获取");
+        }
+
+        if (loginForWorkReqDTO.getPassword() == null) {
+            throw new BadRequestException("请输入你的密码");
+        }
+
+        ServeProvider serveProvider = serveProviderService.findByPhoneAndType(loginForWorkReqDTO.getPhone(), loginForWorkReqDTO.getUserType());
+        if (serveProvider != null) {
+            throw new BadRequestException("该手机号已注册");
+        }
+        String password = passwordEncoder.encode(loginForWorkReqDTO.getPassword());
+        serveProviderService.add(loginForWorkReqDTO.getPhone(), UserType.INSTITUTION, password);
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param loginForWorkReqDTO
+     */
+    @Override
+    public void resetPassword(LoginForWorkReqDTO loginForWorkReqDTO) {
+        // 数据校验
+        if(StringUtils.isEmpty(loginForWorkReqDTO.getVeriryCode())){
+            throw new BadRequestException("验证码错误，请重新获取");
+        }
+        //远程调用publics服务校验验证码是否正确
+        boolean verifyResult = smsCodeApi.verify(loginForWorkReqDTO.getPhone(), SmsBussinessTypeEnum.INSTITUTION_RESET_PASSWORD, loginForWorkReqDTO.getVeriryCode()).getIsSuccess();
+        if(!verifyResult) {
+            throw new BadRequestException("验证码错误，请重新获取");
+        }
+
+        if (loginForWorkReqDTO.getPassword() == null) {
+            throw new BadRequestException("请输入你的新密码");
+        }
+
+        ServeProvider serveProvider = serveProviderService.findByPhoneAndType(loginForWorkReqDTO.getPhone(), UserType.INSTITUTION);
+        if (serveProvider == null) {
+            throw new BadRequestException("该手机号未注册");
+        }
+
+        UpdateWrapper<ServeProvider> wrapper = new UpdateWrapper<ServeProvider>().eq("phone", loginForWorkReqDTO.getPhone()).eq("type", UserType.INSTITUTION).set("password", passwordEncoder.encode(loginForWorkReqDTO.getPassword()));
+        serveProviderService.update(wrapper);
     }
 }

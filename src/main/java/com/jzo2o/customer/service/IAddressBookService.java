@@ -1,6 +1,7 @@
 package com.jzo2o.customer.service;
 
 import com.jzo2o.api.customer.dto.response.AddressBookResDTO;
+import com.jzo2o.api.foundations.dto.response.ServeItemResDTO;
 import com.jzo2o.common.model.PageResult;
 import com.jzo2o.customer.model.domain.AddressBook;
 import com.jzo2o.customer.model.dto.request.AddressBookPageQueryReqDTO;
@@ -27,4 +28,18 @@ public interface IAddressBookService extends IService<AddressBook> {
      * @return 地址编码
      */
     List<AddressBookResDTO> getByUserIdAndCity(Long userId, String cityCode);
+
+    /**
+     * 新增地址
+     *
+     * @param addressBookUpsertReqDTO 地址信息
+     */
+    void addAddressBook(AddressBookUpsertReqDTO addressBookUpsertReqDTO);
+
+    /**
+     * 地址溥分页查询
+     * @param addressBookPageQueryReqDTO
+     */
+    PageResult<AddressBook> page(AddressBookPageQueryReqDTO addressBookPageQueryReqDTO);
+
 }
