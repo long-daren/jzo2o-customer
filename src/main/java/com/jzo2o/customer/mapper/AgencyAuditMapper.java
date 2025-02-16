@@ -2,8 +2,9 @@ package com.jzo2o.customer.mapper;
 
 import java.util.List;
 
-import com.jzo2o.customer.model.domain.AgencyCertification;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jzo2o.customer.model.domain.AgencyAudit;
+import com.jzo2o.customer.model.domain.AgencyCertification;
 import com.jzo2o.customer.model.dto.response.AgencyCertificationAuditResDTO;
 
 /**
@@ -14,6 +15,6 @@ import com.jzo2o.customer.model.dto.response.AgencyCertificationAuditResDTO;
  * @author itcast
  * @since 2023-09-06
  */
-public interface AgencyCertificationMapper extends BaseMapper<AgencyCertification> {
-    List<AgencyCertificationAuditResDTO> queryAgencyCertification();
+public interface AgencyAuditMapper extends BaseMapper<AgencyAudit> {
+
 }

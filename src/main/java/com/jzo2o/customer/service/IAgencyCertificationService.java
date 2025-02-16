@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jzo2o.customer.model.domain.AgencyCertification;
 import com.jzo2o.customer.model.dto.AgencyCertificationUpdateDTO;
 import com.jzo2o.customer.model.dto.request.AgencyCertificationAuditAddReqDTO;
-import com.jzo2o.customer.model.dto.response.AgencyCertificationResDTO;
+import com.jzo2o.customer.model.dto.request.AgencyCertificationAuditPageQueryReqDTO;
+import com.jzo2o.customer.model.dto.response.AgencyCertificationAuditResDTO;
+import com.jzo2o.common.model.PageResult;
 
 /**
  * <p>
@@ -32,4 +34,21 @@ public interface IAgencyCertificationService extends IService<AgencyCertificatio
      * @return 机构认证信息
      */
     AgencyCertification submitAuth(AgencyCertificationAuditAddReqDTO agencyCertificationAuditAddReqDTO);
+
+
+    /**
+     * 分页查询认证审核列表
+     * @param agencyCertificationAuditPageQueryReqDTO
+     * @return
+     */
+    PageResult<AgencyCertificationAuditResDTO> page(AgencyCertificationAuditPageQueryReqDTO agencyCertificationAuditPageQueryReqDTO);
+
+    /**
+     * 审核机构认证信息
+     * @param id
+     * @param certificationStatus
+     * @param rejectReason
+     */
+    void audit(Long id, Integer certificationStatus, String rejectReason);
+
 }

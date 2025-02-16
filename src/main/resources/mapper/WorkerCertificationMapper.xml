@@ -2,4 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jzo2o.customer.mapper.WorkerCertificationMapper">
 
+    <select id="queryWorkerCertification"
+            resultType="com.jzo2o.customer.model.dto.response.WorkerCertificationAuditResDTO">
+        SELECT
+            wc.id id,
+            wc.certification_material certification_material,
+            wc.id_card_no id_card_no,
+            wa.id serve_provider_id,
+            wc.update_time update_time,
+            wc.certification_status certification_status,
+            wc.back_img back_img,
+            wa.auditor_id auditer_id,
+            wa.reject_reason reject_reason,
+            wa.audit_time audit_time,
+            wc.create_time create_time,
+            wc.front_img front_img,
+            wc.name name,
+            wa.audit_status audit_status,
+            wa.auditor_name auditor_name
+        FROM
+            worker_certification wc INNER JOIN worker_audit wa ON wc.id=wa.id
+    </select>
 </mapper>

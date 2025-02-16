@@ -2,4 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jzo2o.customer.mapper.AgencyCertificationMapper">
 
+    <select id="queryAgencyCertification"
+            resultType="com.jzo2o.customer.model.dto.response.AgencyCertificationAuditResDTO">
+        SELECT
+            ac.business_license business_license,
+            ac.legal_person_name legal_person_name,
+            ac.id id,
+            ac.update_time update_time,
+            ac.certification_status certification_status,
+            ac.legal_person_id_card_no legal_person_id_card_no,
+            ac.id_number id_number,
+            aa.auditor_id auditor_id,
+            aa.reject_reason reject_reason,
+            aa.audit_time audit_time,
+            ac.create_time create_time,
+            ac.NAME NAME,
+            aa.audit_status audit_status,
+            aa.id serve_provider_id,
+            aa.auditor_name auditor_name
+        FROM
+            agency_certification ac
+                INNER JOIN agency_audit aa ON ac.id = aa.id
+    </select>
 </mapper>
